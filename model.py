@@ -100,14 +100,14 @@ class LSTM_TrajGAN():
                           name='input_' + key)
 
                 unstacked = Lambda(lambda x: tf.unstack(x, axis=1))(i)
-                d = Dense(units=64, use_bias=True, activation='relu', kernel_initializer=he_uniform(seed=1), name='emb_' + key)
+                d = Dense(units=64, use_bias=True, activation='selu', kernel_initializer=he_uniform(seed=1), name='emb_' + key)
                 dense_latlon = [d(x) for x in unstacked]
                 e = Lambda(lambda x: tf.stack(x, axis=1))(dense_latlon)
 
             else:
                 i = Input(shape=(self.max_length,self.vocab_size[key]), name='input_' + key)
                 unstacked = Lambda(lambda x: tf.unstack(x, axis=1))(i)
-                d = Dense(units=self.vocab_size[key], use_bias=True, activation='relu', kernel_initializer=he_uniform(seed=1), name='emb_' + key)
+                d = Dense(units=self.vocab_size[key], use_bias=True, activation='selu', kernel_initializer=he_uniform(seed=1), name='emb_' + key)
                 dense_attr = [d(x) for x in unstacked]
                 e = Lambda(lambda x: tf.stack(x, axis=1))(dense_attr)
             inputs.append(i)
@@ -116,7 +116,7 @@ class LSTM_TrajGAN():
         # Feature Fusion Layer
         concat_input = Concatenate(axis=2)(embeddings)
         unstacked = Lambda(lambda x: tf.unstack(x, axis=1))(concat_input)
-        d = Dense(units=100, use_bias=True, activation='relu', kernel_initializer=he_uniform(seed=1), name='emb_trajpoint')
+        d = Dense(units=100, use_bias=True, activation='selu', kernel_initializer=he_uniform(seed=1), name='emb_trajpoint')
         dense_outputs = [d(x) for x in unstacked]
         emb_traj = Lambda(lambda x: tf.stack(x, axis=1))(dense_outputs)
         
@@ -144,13 +144,13 @@ class LSTM_TrajGAN():
             elif key == 'lat_lon':
                 i = Input(shape=(self.max_length, self.vocab_size[key]), name='input_' + key)
                 unstacked = Lambda(lambda x: tf.unstack(x, axis=1))(i)
-                d = Dense(units=64, activation='relu', use_bias=True, kernel_initializer=he_uniform(seed=1), name='emb_' + key)
+                d = Dense(units=64, activation='selu', use_bias=True, kernel_initializer=he_uniform(seed=1), name='emb_' + key)
                 dense_latlon = [d(x) for x in unstacked]
                 e = Lambda(lambda x: tf.stack(x, axis=1))(dense_latlon)
             else:
                 i = Input(shape=(self.max_length,self.vocab_size[key]), name='input_' + key)
                 unstacked = Lambda(lambda x: tf.unstack(x, axis=1))(i)
-                d = Dense(units=self.vocab_size[key], activation='relu', use_bias=True, kernel_initializer=he_uniform(seed=1), name='emb_' + key)
+                d = Dense(units=self.vocab_size[key], activation='selu', use_bias=True, kernel_initializer=he_uniform(seed=1), name='emb_' + key)
                 dense_attr = [d(x) for x in unstacked]
                 e = Lambda(lambda x: tf.stack(x, axis=1))(dense_attr)
             inputs.append(i)
@@ -160,7 +160,7 @@ class LSTM_TrajGAN():
         # Feature Fusion Layer
         concat_input = Concatenate(axis=2)(embeddings)
         unstacked = Lambda(lambda x: tf.unstack(x, axis=1))(concat_input)
-        d = Dense(units=100, use_bias=True, activation='relu', kernel_initializer=he_uniform(seed=1), name='emb_trajpoint')
+        d = Dense(units=100, use_bias=True, activation='selu', kernel_initializer=he_uniform(seed=1), name='emb_trajpoint')
         dense_outputs = [d(Concatenate(axis=1)([x, noise])) for x in unstacked]
         #dense_outputs = [d(x) for x in unstacked]
         emb_traj = Lambda(lambda x: tf.stack(x, axis=1))(dense_outputs)
